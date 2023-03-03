@@ -5,13 +5,13 @@ import numpy as np
 def apply_gamma(plane) :
 	return np.where(plane <= 0.0031308,
 		12.92 * plane,
-		1.055 * np.power(plane, 1.0/2.4) - 0.55
+		1.055 * np.power(plane, 1.0/2.4) - 0.055
 	)
 
 def revert_gamma(plane) :
 	return np.where(plane <= 0.04045,
 		plane / 12.92,
-		np.power((plane + 0.55) / 1.055, 2.4)
+		np.power((plane + 0.055) / 1.055, 2.4)
 	)
 
 m_sRGB_to_XYZ = np.matrix([
@@ -54,10 +54,13 @@ if __name__ == '__main__' :
 	import matplotlib.pyplot as plt
 	from PIL import Image
 
-	n = np.linspace(0.0, 1.0)
+	n = np.linspace(0.0, 1.0, 1024)
 	g = apply_gamma(n)
+	u = revert_gamma(g)
 
 	plt.plot(n, g)
+	plt.plot(n, u)
+	plt.grid()
 	plt.show()
 
 	pic = Image.open('red_cabins_near_mountains.jpg')
