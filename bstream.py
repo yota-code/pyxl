@@ -1,12 +1,43 @@
+#!/usr/bin/env python3
 
+import struct
 
-class BitStream() :
-
+class BytReader() :
+	"""
+	hybrid reader, either by slice of as stream
+	"""
 	def __init__(self, data) :
 		self.data = data
 		self.curs = 0
 
-		print(' - '.join(str(self[i]) for i in range(len(self))))
+	def seek_abs(self, n:int) :
+		self.curs = n
+
+	def seek_rel(self, n:int) :
+		self.curs += n
+			
+	def read_ctyp(self, fmt, at=None) :
+		u = struct.Struct(fmt)
+		if at is None :
+			s = u.unpack_from(self.data, self.curs)
+			p = u.size()
+			self.seek_rel(p)
+		else :
+			s = u.unpack_from(self.data, at)
+
+	def read_bytes(self, n, at=None) :
+		if at is None :
+			s = self.data[self.curs:self.curs+n]
+			self.seek_rel(n)
+			return s
+		else :
+			return self.data[at:at+n]
+
+
+class BitReader() :
+	def __init__(self, data) :
+		self.data = data
+		self.curs = 0
 
 	def seek(self, bitindex:int) :
 		self.curs = bitindex
@@ -32,8 +63,8 @@ class BitStream() :
 		return len(self.data) * 8
 	
 	def read_bytes(self, n) :
+		pass
 		
-	
 	def bit_address(self, k) :
 		return k // 8, k % 8
 
