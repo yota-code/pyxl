@@ -18,12 +18,14 @@ class BytReader() :
 			
 	def read_ctyp(self, fmt, at=None) :
 		u = struct.Struct(fmt)
+		print(u, type(u))
 		if at is None :
 			s = u.unpack_from(self.data, self.curs)
-			p = u.size()
+			p = u.size
 			self.seek_rel(p)
 		else :
 			s = u.unpack_from(self.data, at)
+		return s
 
 	def read_bytes(self, n, at=None) :
 		if at is None :
@@ -32,6 +34,9 @@ class BytReader() :
 			return s
 		else :
 			return self.data[at:at+n]
+	
+	def __getitem__(self, key) :
+		return self.data[key]
 
 
 class BitReader() :
